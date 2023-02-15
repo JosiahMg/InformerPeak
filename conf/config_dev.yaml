@@ -1,0 +1,14 @@
+# dev config
+postgresql:
+  host: 10.17.32.205
+  port: 15432
+  user: postgres
+  password: postgres
+  db_name: slsl_dt_core
+  type: com.zaxxer.hikari.HikariDataSource
+
+tdengine:
+  url: 10.17.32.203:6041
+  user: digital
+  password: "!QAZ2wsx"
+  db_name: slsl_dt
