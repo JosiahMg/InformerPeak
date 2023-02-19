@@ -1,7 +1,7 @@
 import os
 import time
 import warnings
-
+from conf.constant import Y_OFFSET_IDX
 import numpy as np
 import torch
 import torch.nn as nn
@@ -250,11 +250,15 @@ class Exp_Informer(Exp_Basic):
 
         for i, (batch_x, batch_y, batch_x_mark, batch_y_mark) in enumerate(pred_loader):
             pred, true = self._process_one_batch(
-                pred_data, batch_x, batch_y, batch_x_mark, batch_y_mark)
+                pred_data, batch_x, batch_y, batch_x_mark, batch_y_mark, flag='pred')
             preds.append(pred.detach().cpu().numpy())
 
         preds = np.array(preds)
         preds = preds.reshape(-1, preds.shape[-2], preds.shape[-1])
+        print(f'preds: {preds.shape} - ')
+        print(preds)
+        print(f'preds: {true.shape} - ')
+        print(true.cpu().numpy())
 
         # result save
         folder_path = './results/' + setting + '/'
@@ -265,12 +269,12 @@ class Exp_Informer(Exp_Basic):
 
         return
 
-    def _process_one_batch(self, dataset_object, batch_x, batch_y, batch_x_mark, batch_y_mark):
-        batch_x = batch_x.float().to(self.device)
-        batch_y = batch_y.float()
+    def _process_one_batch(self, dataset_object, batch_x, batch_y, batch_x_mark, batch_y_mark, flag='train'):
+        batch_x = batch_x.float().to(self.device)  # encoder: (batch, seq_len_en, feat_size)
+        batch_y = batch_y.float()  # decoder: (batch, seq_len_de, feat_size)
 
-        batch_x_mark = batch_x_mark.float().to(self.device)
-        batch_y_mark = batch_y_mark.float().to(self.device)
+        batch_x_mark = batch_x_mark.float().to(self.device)  # encoder: (batch, seq_len_en, ts_size)
+        batch_y_mark = batch_y_mark.float().to(self.device)  # decoder: (batch, seq_len_de, ts_size)
 
         # decoder input
         if self.args.padding == 0:
@@ -290,9 +294,12 @@ class Exp_Informer(Exp_Basic):
                 outputs = self.model(batch_x, batch_x_mark, dec_inp, batch_y_mark)[0]
             else:
                 outputs = self.model(batch_x, batch_x_mark, dec_inp, batch_y_mark)
-        if self.args.inverse:
-            outputs = dataset_object.inverse_transform(outputs)
-        f_dim = -1 if self.args.features == 'MS' else 0
+
+        f_dim = -Y_OFFSET_IDX if self.args.features == 'MS' else 0
         batch_y = batch_y[:, -self.args.pred_len:, f_dim:].to(self.device)
+
+        if self.args.inverse or flag == 'pred':
+            outputs = dataset_object.inverse_transform(outputs)
+            batch_y = dataset_object.inverse_transform(batch_y)
 
         return outputs, batch_y

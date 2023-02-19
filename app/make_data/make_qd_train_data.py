@@ -119,7 +119,7 @@ class CreateTrainData:
         # 计算LNG补气信息
         lng_df = df_hour[df_hour['device_id'].isin(LNG_ID_LIST)].copy()
         lng_df.loc[lng_df['flow'] <= LNG_MNI_FLOW_HOUR, 'flow'] = 0
-        for i, lng_id in enumerate(LNG_ID_LIST, OFFSET_IDX):
+        for i, lng_id in enumerate(LNG_ID_LIST, Y_OFFSET_IDX):
             lng_df = df_hour[df_hour['device_id'] == lng_id]
             apply_count = (lng_df['flow'] != 0).sum()
             if apply_count > ct / 3:  # 如果1小时内存在1/3以上的补气则认为这一个小时是在补气

@@ -6,7 +6,7 @@ import torch
 
 from app.informer.exp.exp_informer import Exp_Informer
 from common.log_utils import get_logger
-from conf.constant import OFFSET_IDX
+from conf.constant import Y_OFFSET_IDX
 from conf.path_config import resource_dir
 
 logger = get_logger(__name__)
@@ -30,7 +30,7 @@ parser.add_argument('--freq', type=str, default='h',
 parser.add_argument('--checkpoints', type=str, default='./checkpoints/', help='location of model checkpoints')
 
 parser.add_argument('--seq_len', type=int, default=96, help='input sequence length of Informer encoder')
-parser.add_argument('--label_len', type=int, default=48, help='start token length of Informer decoder')
+parser.add_argument('--label_len', type=int, default=24, help='start token length of Informer decoder')
 parser.add_argument('--pred_len', type=int, default=24, help='prediction sequence length')
 # Informer decoder input: concat[start token series(label_len), zero padding series(pred_len)]
 
@@ -54,15 +54,15 @@ parser.add_argument('--embed', type=str, default='timeF',
                     help='time features encoding, options:[timeF, fixed, learned]')
 parser.add_argument('--activation', type=str, default='gelu', help='activation')
 parser.add_argument('--output_attention', action='store_true', help='whether to output attention in ecoder')
-parser.add_argument('--do_predict', action='store_true', help='whether to predict unseen future data_loader')
+parser.add_argument('--do_predict', action='store_true', help='whether to predict unseen future data_loader', default=True)
 parser.add_argument('--mix', action='store_false', help='use mix attention in generative decoder', default=True)
 parser.add_argument('--cols', type=str, nargs='+', help='certain cols from the data_loader files as the input features')
 parser.add_argument('--num_workers', type=int, default=0, help='data_loader loader num workers')
-parser.add_argument('--itr', type=int, default=2, help='experiments times')
-parser.add_argument('--train_epochs', type=int, default=6, help='train epochs')
-parser.add_argument('--batch_size', type=int, default=1, help='batch size of train input data_loader')
-parser.add_argument('--patience', type=int, default=3, help='early stopping patience')
-parser.add_argument('--learning_rate', type=float, default=0.0001, help='optimizer learning rate')
+parser.add_argument('--itr', type=int, default=1, help='experiments times')
+parser.add_argument('--train_epochs', type=int, default=20, help='train epochs')
+parser.add_argument('--batch_size', type=int, default=32, help='batch size of train input data_loader')
+parser.add_argument('--patience', type=int, default=5, help='early stopping patience')
+parser.add_argument('--learning_rate', type=float, default=0.001, help='optimizer learning rate')
 parser.add_argument('--des', type=str, default='test', help='exp description')
 parser.add_argument('--loss', type=str, default='mse', help='loss function')
 parser.add_argument('--lradj', type=str, default='type1', help='adjust learning rate')
@@ -89,7 +89,7 @@ data_parser = {
     'WTH': {'data_loader': 'WTH.csv', 'T': ['WetBulbCelsius'], 'M': [12, 12, 12], 'S': [1, 1, 1], 'MS': [12, 12, 1]},
     'qd_peak': {'data_loader': 'qd_peak.csv', 'T': ['hour_in_wm3', 'hour_out_wm3', '100100022_flow', '10012167_flow'],
                 'M': [qd_peak_ft_size, qd_peak_ft_size, qd_peak_ft_size], 'S': [1, 1, 1],
-                'MS': [qd_peak_ft_size, qd_peak_ft_size, OFFSET_IDX]}
+                'MS': [qd_peak_ft_size, qd_peak_ft_size, Y_OFFSET_IDX]}
 }
 if args.data in data_parser.keys():
     data_info = data_parser[args.data]

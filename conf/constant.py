@@ -39,6 +39,6 @@ FEATURE_NAMES = ['100100024_pressure', '100100024_flow', '100100020_pressure', '
                  '100100008_pressure', '100100008_flow', '100100014_pressure', '100100014_flow', '11142_pressure',
                  '11142_flow', '12166_pressure', '12166_flow']
 TARGET_NAMES = ['hour_in_wm3', 'hour_out_wm3', '100100022_flow', '10012167_flow']
-OFFSET_IDX = 4
-LNG_ID_LIST = [lng_id.split('_')[0] for lng_id in TARGET_NAMES[OFFSET_IDX:]]
+Y_OFFSET_IDX = 4
+LNG_ID_LIST = [lng_id.split('_')[0] for lng_id in TARGET_NAMES[Y_OFFSET_IDX:]]
 LNG_MNI_FLOW_HOUR = 500  # lng补气超过500 m3/h则认为是在补气

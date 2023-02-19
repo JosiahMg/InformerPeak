@@ -1,5 +1,6 @@
 import numpy as np
 import torch
+from conf.constant import Y_OFFSET_IDX
 
 def adjust_learning_rate(optimizer, epoch, args):
     # lr = args.learning_rate * (0.2 ** (epoch // 2))
@@ -71,6 +72,6 @@ class StandardScaler():
         mean = torch.from_numpy(self.mean).type_as(data).to(data.device) if torch.is_tensor(data) else self.mean
         std = torch.from_numpy(self.std).type_as(data).to(data.device) if torch.is_tensor(data) else self.std
         if data.shape[-1] != mean.shape[-1]:
-            mean = mean[-1:]
-            std = std[-1:]
+            mean = mean[-Y_OFFSET_IDX:]
+            std = std[-Y_OFFSET_IDX:]
         return (data * std) + mean

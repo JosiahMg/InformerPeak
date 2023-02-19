@@ -327,16 +327,19 @@ class Dataset_Pred(Dataset):
         df_raw = pd.read_csv(os.path.join(self.root_path,
                                           self.data_path))
         '''
-        df_raw.columns: ['date', ...(other features), target feature]
+        df_raw.columns: ['ts', ...(other features), target feature]
         '''
         if self.cols:
             cols = self.cols.copy()
             cols.remove(self.target)
         else:
-            cols = list(df_raw.columns);
-            cols.remove(self.target);
-            cols.remove('date')
-        df_raw = df_raw[['date'] + cols + [self.target]]
+            cols = list(df_raw.columns)
+            if isinstance(self.target, list):
+                [cols.remove(target) for target in self.target]
+            else:
+                cols.remove(self.target)
+            cols.remove('ts')
+        df_raw = df_raw[['ts'] + cols + self.target]
 
         border1 = len(df_raw) - self.seq_len
         border2 = len(df_raw)
@@ -354,11 +357,11 @@ class Dataset_Pred(Dataset):
             data = df_data.values
 
         tmp_stamp = df_raw[['ts']][border1:border2]
-        tmp_stamp['ts'] = pd.to_datetime(tmp_stamp.date)
-        pred_dates = pd.date_range(tmp_stamp.date.values[-1], periods=self.pred_len + 1, freq=self.freq)
+        tmp_stamp['ts'] = pd.to_datetime(tmp_stamp.ts)
+        pred_dates = pd.date_range(tmp_stamp.ts.values[-1], periods=self.pred_len + 1, freq=self.freq)
 
         df_stamp = pd.DataFrame(columns=['ts'])
-        df_stamp.date = list(tmp_stamp.date.values) + list(pred_dates[1:])
+        df_stamp.ts = list(tmp_stamp.ts.values) + list(pred_dates[1:])
         data_stamp = time_features(df_stamp, timeenc=self.timeenc, freq=self.freq[-1:])
 
         self.data_x = data[border1:border2]
