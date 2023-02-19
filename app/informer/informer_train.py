@@ -6,7 +6,7 @@ import torch
 
 from app.informer.exp.exp_informer import Exp_Informer
 from common.log_utils import get_logger
-from conf.constant import Y_OFFSET_IDX, MODE_FILENAME, MODE_TARGET
+from conf.constant import Y_OFFSET_IDX, MODE_FILENAME, MODE_TARGET, MODE_TYPE
 from conf.path_config import resource_dir
 
 logger = get_logger(__name__)
@@ -54,7 +54,8 @@ parser.add_argument('--embed', type=str, default='timeF',
                     help='time features encoding, options:[timeF, fixed, learned]')
 parser.add_argument('--activation', type=str, default='gelu', help='activation')
 parser.add_argument('--output_attention', action='store_true', help='whether to output attention in ecoder')
-parser.add_argument('--do_predict', action='store_true', help='whether to predict unseen future data_loader', default=True)
+parser.add_argument('--do_predict', action='store_true', help='whether to predict unseen future data_loader',
+                    default=True)
 parser.add_argument('--mix', action='store_false', help='use mix attention in generative decoder', default=True)
 parser.add_argument('--cols', type=str, nargs='+', help='certain cols from the data_loader files as the input features')
 parser.add_argument('--num_workers', type=int, default=0, help='data_loader loader num workers')
@@ -114,23 +115,23 @@ Exp = Exp_Informer
 
 for ii in range(args.itr):
     # setting record of experiments
-    setting = '{}_{}_ft{}_sl{}_ll{}_pl{}_dm{}_nh{}_el{}_dl{}_df{}_at{}_fc{}_eb{}_dt{}_mx{}_{}_{}'.format(args.model,
-                                                                                                         args.data,
-                                                                                                         args.features,
-                                                                                                         args.seq_len,
-                                                                                                         args.label_len,
-                                                                                                         args.pred_len,
-                                                                                                         args.d_model,
-                                                                                                         args.n_heads,
-                                                                                                         args.e_layers,
-                                                                                                         args.d_layers,
-                                                                                                         args.d_ff,
-                                                                                                         args.attn,
-                                                                                                         args.factor,
-                                                                                                         args.embed,
-                                                                                                         args.distil,
-                                                                                                         args.mix,
-                                                                                                         args.des, ii)
+    setting = '{}_{}_ft{}_sl{}_ll{}_pl{}_dm{}_nh{}_el{}_dl{}_df{}_at{}_fc{}_eb{}_dt{}_mx{}_lr{}'.format(MODE_TYPE,
+                                                                                                        args.data,
+                                                                                                        args.features,
+                                                                                                        args.seq_len,
+                                                                                                        args.label_len,
+                                                                                                        args.pred_len,
+                                                                                                        args.d_model,
+                                                                                                        args.n_heads,
+                                                                                                        args.e_layers,
+                                                                                                        args.d_layers,
+                                                                                                        args.d_ff,
+                                                                                                        args.attn,
+                                                                                                        args.factor,
+                                                                                                        args.embed,
+                                                                                                        args.distil,
+                                                                                                        args.mix,
+                                                                                                        args.learning_rate)
 
     exp = Exp(args)  # set experiments
     logger.info('>>>>>>>start training : {}>>>>>>>>>>>>>>>>>>>>>>>>>>'.format(setting))
