@@ -6,12 +6,12 @@ import torch
 
 from app.informer.exp.exp_informer import Exp_Informer
 from common.log_utils import get_logger
-from conf.constant import Y_OFFSET_IDX
+from conf.constant import Y_OFFSET_IDX, MODE_FILENAME, MODE_TARGET
 from conf.path_config import resource_dir
 
 logger = get_logger(__name__)
 
-peak_df = pd.read_csv(os.path.join(resource_dir, 'qd_peak.csv'), nrows=10)
+peak_df = pd.read_csv(os.path.join(resource_dir, MODE_FILENAME), nrows=10)
 column_num = peak_df.shape[1]
 
 parser = argparse.ArgumentParser(description='[Informer] Long Sequences Forecasting')
@@ -21,7 +21,7 @@ parser.add_argument('--model', type=str, default='informer',
 
 parser.add_argument('--data', type=str, default='qd_peak', help='data_loader')
 parser.add_argument('--root_path', type=str, default=resource_dir, help='root path of the data_loader file')
-parser.add_argument('--data_path', type=str, default='qd_peak.csv', help='data_loader file')
+parser.add_argument('--data_path', type=str, default=MODE_FILENAME, help='data_loader file')
 parser.add_argument('--features', type=str, default='MS',
                     help='forecasting task, options:[M, S, MS]; M:multivariate predict multivariate, S:univariate predict univariate, MS:multivariate predict univariate')
 parser.add_argument('--target', type=str, default='OT', help='target feature in S or MS task')
@@ -43,7 +43,7 @@ parser.add_argument('--e_layers', type=int, default=2, help='num of encoder laye
 parser.add_argument('--d_layers', type=int, default=1, help='num of decoder layers')
 parser.add_argument('--s_layers', type=str, default='3,2,1', help='num of stack encoder layers')
 parser.add_argument('--d_ff', type=int, default=2048, help='dimension of fcn')
-parser.add_argument('--factor', type=int, default=5, help='probsparse attn factor')
+parser.add_argument('--factor', type=int, default=1, help='probsparse attn factor')
 parser.add_argument('--padding', type=int, default=0, help='padding type')
 parser.add_argument('--distil', action='store_false',
                     help='whether to use distilling in encoder, using this argument means not using distilling',
@@ -59,10 +59,10 @@ parser.add_argument('--mix', action='store_false', help='use mix attention in ge
 parser.add_argument('--cols', type=str, nargs='+', help='certain cols from the data_loader files as the input features')
 parser.add_argument('--num_workers', type=int, default=0, help='data_loader loader num workers')
 parser.add_argument('--itr', type=int, default=1, help='experiments times')
-parser.add_argument('--train_epochs', type=int, default=20, help='train epochs')
+parser.add_argument('--train_epochs', type=int, default=10, help='train epochs')
 parser.add_argument('--batch_size', type=int, default=32, help='batch size of train input data_loader')
 parser.add_argument('--patience', type=int, default=5, help='early stopping patience')
-parser.add_argument('--learning_rate', type=float, default=0.001, help='optimizer learning rate')
+parser.add_argument('--learning_rate', type=float, default=0.0001, help='optimizer learning rate')
 parser.add_argument('--des', type=str, default='test', help='exp description')
 parser.add_argument('--loss', type=str, default='mse', help='loss function')
 parser.add_argument('--lradj', type=str, default='type1', help='adjust learning rate')
@@ -85,9 +85,15 @@ if args.use_gpu and args.use_multi_gpu:
     args.gpu = args.device_ids[0]
 
 qd_peak_ft_size = column_num - 1
+# data_parser = {
+#     'WTH': {'data_loader': 'WTH.csv', 'T': ['WetBulbCelsius'], 'M': [12, 12, 12], 'S': [1, 1, 1], 'MS': [12, 12, 1]},
+#     'qd_peak': {'data_loader': 'qd_peak.csv', 'T': ['hour_in_wm3', 'hour_out_wm3', '100100022_flow', '10012167_flow'],
+#                 'M': [qd_peak_ft_size, qd_peak_ft_size, qd_peak_ft_size], 'S': [1, 1, 1],
+#                 'MS': [qd_peak_ft_size, qd_peak_ft_size, Y_OFFSET_IDX]}
+# }
 data_parser = {
     'WTH': {'data_loader': 'WTH.csv', 'T': ['WetBulbCelsius'], 'M': [12, 12, 12], 'S': [1, 1, 1], 'MS': [12, 12, 1]},
-    'qd_peak': {'data_loader': 'qd_peak.csv', 'T': ['hour_in_wm3', 'hour_out_wm3', '100100022_flow', '10012167_flow'],
+    'qd_peak': {'data_loader': MODE_FILENAME, 'T': MODE_TARGET,
                 'M': [qd_peak_ft_size, qd_peak_ft_size, qd_peak_ft_size], 'S': [1, 1, 1],
                 'MS': [qd_peak_ft_size, qd_peak_ft_size, Y_OFFSET_IDX]}
 }

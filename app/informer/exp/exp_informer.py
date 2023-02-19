@@ -1,18 +1,19 @@
 import os
 import time
 import warnings
-from conf.constant import Y_OFFSET_IDX
+from conf.constant import Y_OFFSET_IDX, MODE_TYPE
 import numpy as np
 import torch
 import torch.nn as nn
 from torch import optim
 from torch.utils.data import DataLoader
-
+import matplotlib.pyplot as plt
 from app.informer.data_loader.data_loader import Dataset_ETT_hour, Dataset_ETT_minute, Dataset_Custom, Dataset_Pred
 from app.informer.exp.exp_basic import Exp_Basic
 from app.informer.models.model import Informer, InformerStack
 from app.informer.utils.metrics import metric
 from app.informer.utils.tools import EarlyStopping, adjust_learning_rate
+from sklearn import metrics
 
 warnings.filterwarnings('ignore')
 
@@ -256,16 +257,17 @@ class Exp_Informer(Exp_Basic):
         preds = np.array(preds)
         preds = preds.reshape(-1, preds.shape[-2], preds.shape[-1])
         print(f'preds: {preds.shape} - ')
-        print(preds)
+        # print(preds)
+        true = true.cpu().numpy()
         print(f'preds: {true.shape} - ')
-        print(true.cpu().numpy())
-
+        # print(true)
         # result save
         folder_path = './results/' + setting + '/'
         if not os.path.exists(folder_path):
             os.makedirs(folder_path)
 
-        np.save(folder_path + 'real_prediction.npy', preds)
+        # np.save(folder_path + f'{MODE_TYPE}.npy', preds)
+        self.plt_show_data(preds[0][:, 0], true[0][:, 0], self.args.data_path[8:-4])
 
         return
 
@@ -303,3 +305,27 @@ class Exp_Informer(Exp_Basic):
             batch_y = dataset_object.inverse_transform(batch_y)
 
         return outputs, batch_y
+
+    def plt_show_data(self, pred_data, true_data, title_name):
+        xlims = np.arange(len(pred_data))
+        if title_name == 'input' or title_name == 'output':
+            ylims = [8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22]
+        plt.title(title_name)  # 写上图题
+        plt.xlabel('ts')  # 为x轴命名为“x”
+        plt.ylabel('m3/h')  # 为y轴命名为“y”
+        # plt.xlim(0, 1)  # 设置x轴的范围为[0,1]
+        # plt.ylim(0, 1)  # 同上
+        plt.xticks(xlims)  # 设置x轴刻度
+        plt.yticks(ylims)  # 设置y轴刻度
+        plt.tick_params(labelsize=10)  # 设置刻度字号
+        plt.plot(xlims, pred_data)  # 第一个data表示选取data为数据集，第二个是函数，data的平方
+        plt.plot(xlims, true_data)  # 同上
+        plt.legend(['predict data', 'true data'])  # 打出图例
+
+        # result save
+        folder_path = './images/' + title_name + '/'
+        if not os.path.exists(folder_path):
+            os.makedirs(folder_path)
+        mse = np.round(metrics.mean_squared_error(true_data, pred_data), 3)
+        plt.savefig(folder_path + f'{MODE_TYPE}_{str(mse)}.png')
+        # plt.show()  # 显示图形

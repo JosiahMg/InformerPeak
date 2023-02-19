@@ -39,6 +39,18 @@ FEATURE_NAMES = ['100100024_pressure', '100100024_flow', '100100020_pressure', '
                  '100100008_pressure', '100100008_flow', '100100014_pressure', '100100014_flow', '11142_pressure',
                  '11142_flow', '12166_pressure', '12166_flow']
 TARGET_NAMES = ['hour_in_wm3', 'hour_out_wm3', '100100022_flow', '10012167_flow']
-Y_OFFSET_IDX = 4
+Y_OFFSET_IDX = 1
 LNG_ID_LIST = [lng_id.split('_')[0] for lng_id in TARGET_NAMES[Y_OFFSET_IDX:]]
 LNG_MNI_FLOW_HOUR = 500  # lng补气超过500 m3/h则认为是在补气
+
+MODE_TYPE_DT = {
+    # 训练每小时供气量预测模型
+    "input": {"filename": 'qd_peak_input.csv', "target": ['hour_in_wm3']},
+    "output": {"filename": 'qd_peak_output.csv', "target": ['hour_out_wm3']},         # 训练每小时用气量预测模型
+    "tuanjielu": {"filename": "qd_peak_tuanjielu.csv", "target": ['10012167_flow']},   # 训练团结路LNG预测模型
+    "lingang": {"filename": "qd_peak_lingang.csv", "target": ['100100022_flow']}     # 训练临港LNG预测模型
+}
+
+MODE_TYPE = 'input'
+MODE_FILENAME = MODE_TYPE_DT[MODE_TYPE]['filename']
+MODE_TARGET = MODE_TYPE_DT[MODE_TYPE]['target']
