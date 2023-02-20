@@ -6,7 +6,7 @@ import torch
 
 from app.informer.exp.exp_informer import Exp_Informer
 from common.log_utils import get_logger
-from conf.constant import Y_OFFSET_IDX, MODE_FILENAME, MODE_TARGET, MODE_TYPE
+from conf.constant import Y_OFFSET_IDX, MODE_FILENAME, MODE_TARGET, MODE_TYPE, SCALE_FLAG
 from conf.path_config import resource_dir
 
 logger = get_logger(__name__)

@@ -51,6 +51,7 @@ MODE_TYPE_DT = {
     "lingang": {"filename": "qd_peak_lingang.csv", "target": ['100100022_flow']}     # 训练临港LNG预测模型
 }
 
-MODE_TYPE = 'output'
+MODE_TYPE = 'input'
 MODE_FILENAME = MODE_TYPE_DT[MODE_TYPE]['filename']
 MODE_TARGET = MODE_TYPE_DT[MODE_TYPE]['target']
+SCALE_FLAG = True   # 是否需要进行标准化

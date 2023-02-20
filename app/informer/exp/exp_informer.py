@@ -1,7 +1,7 @@
 import os
 import time
 import warnings
-from conf.constant import Y_OFFSET_IDX, MODE_TYPE
+from conf.constant import Y_OFFSET_IDX, MODE_TYPE, SCALE_FLAG
 import numpy as np
 import torch
 import torch.nn as nn
@@ -257,10 +257,10 @@ class Exp_Informer(Exp_Basic):
         preds = np.array(preds)
         preds = preds.reshape(-1, preds.shape[-2], preds.shape[-1])
         print(f'preds: {preds.shape} - ')
-        # print(preds)
+        print(preds)
         true = true.cpu().numpy()
         print(f'preds: {true.shape} - ')
-        # print(true)
+        print(true)
         # result save
         folder_path = './results/' + setting + '/'
         if not os.path.exists(folder_path):
@@ -302,14 +302,14 @@ class Exp_Informer(Exp_Basic):
 
         if self.args.inverse or flag == 'pred':
             outputs = dataset_object.inverse_transform(outputs)
+        if not self.args.inverse and flag == 'pred':
             batch_y = dataset_object.inverse_transform(batch_y)
 
         return outputs, batch_y
 
     def plt_show_data(self, pred_data, true_data, title_name):
         xlims = np.arange(len(pred_data))
-        if title_name == 'input' or title_name == 'output':
-            ylims = [8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22]
+        ylims = (min(true_data), max(true_data))
         plt.title(title_name)  # 写上图题
         plt.xlabel('ts')  # 为x轴命名为“x”
         plt.ylabel('m3/h')  # 为y轴命名为“y”

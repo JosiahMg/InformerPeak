@@ -4,7 +4,7 @@ import warnings
 import numpy as np
 import pandas as pd
 from torch.utils.data import Dataset
-
+from conf.constant import SCALE_FLAG
 from app.informer.utils.timefeatures import time_features
 from app.informer.utils.tools import StandardScaler
 
@@ -191,7 +191,7 @@ class Dataset_ETT_minute(Dataset):
 class Dataset_Custom(Dataset):
     def __init__(self, root_path, flag='train', size=None,
                  features='S', data_path='ETTh1.csv',
-                 target='OT', scale=True, inverse=False, timeenc=0, freq='h', cols=None):
+                 target='OT', scale=SCALE_FLAG, inverse=False, timeenc=0, freq='h', cols=None):
         # size [seq_len, label_len, pred_len]
         # info
         if size == None:
@@ -297,7 +297,7 @@ class Dataset_Custom(Dataset):
 class Dataset_Pred(Dataset):
     def __init__(self, root_path, flag='pred', size=None,
                  features='S', data_path='ETTh1.csv',
-                 target='OT', scale=True, inverse=False, timeenc=0, freq='15min', cols=None):
+                 target='OT', scale=SCALE_FLAG, inverse=False, timeenc=0, freq='15min', cols=None):
         # size [seq_len, label_len, pred_len]
         # info
         if size == None:

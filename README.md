@@ -23,3 +23,13 @@ devices='0,1,2,3', detail_freq='h'
 
 
 ### output
+seq_len=96, label_len=24, pred_len=24, enc_in=30, 
+dec_in=30, c_out=1, d_model=512, n_heads=8, e_layers=2, 
+d_layers=1, s_layers=[3, 2, 1], d_ff=2048, factor=1, 
+padding=0, distil=True, dropout=0.05, attn='prob', 
+embed='timeF', activation='gelu', output_attention=False, 
+do_predict=True, mix=True, cols=None, num_workers=0, itr=1, 
+train_epochs=10, batch_size=32, patience=5, learning_rate=0.0001, 
+des='test', loss='mse', lradj='type1', use_amp=False, 
+inverse=False, use_gpu=True, gpu=0, use_multi_gpu=False,
+
