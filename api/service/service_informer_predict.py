@@ -1,18 +1,17 @@
 # -*- coding: utf-8 -*-
 # Author: Mh
 # Date: 2022/11/10 17:56
-# Function:  气源追踪
+# Function:  informer预测
 import os.path
 from datetime import datetime
-
-from app.trace_source.trace_source import TraceSource
 from common.log_utils import get_logger
 from conf.path_config import data_dir
+from app.informer.informer_predict import InformerPredict
 
 logger = get_logger(__name__)
 
 
-class ServiceSourceTrace:
+class ServiceInformerPredict:
     def __init__(self, info_dict):
         self.info_dict = info_dict
         self.check_param()
@@ -23,10 +22,10 @@ class ServiceSourceTrace:
         self.start_time = info_dict.get("startTime", datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
         self.data_path = os.path.join(data_dir, self.project_id)
         logger.info(
-            f"trace source project_id: {self.project_id}, batch_no: {self.batch_no}, start_time: {self.start_time}")
+            f"informer predict project_id: {self.project_id}, batch_no: {self.batch_no}, start_time: {self.start_time}")
 
     def execute(self):
-        TraceSource(self.project_id, self.topo_id, self.batch_no, self.start_time, self.calc_type).execute()
+        InformerPredict(self.project_id, self.topo_id, self.batch_no, self.start_time, self.calc_type).execute()
 
     def check_param(self):
         """ 检查数据的合法性
@@ -47,8 +46,3 @@ class ServiceSourceTrace:
             logger.error("start time is null")
             raise Exception("startTime为空")
 
-    @staticmethod
-    def standard_gis_ids(gis_ids):
-        gis_ids = gis_ids if isinstance(gis_ids, list) else [gis_ids]
-        gis_ids = list(map(str, gis_ids))
-        return gis_ids

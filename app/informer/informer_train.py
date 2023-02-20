@@ -6,7 +6,7 @@ import torch
 
 from app.informer.exp.exp_informer import Exp_Informer
 from common.log_utils import get_logger
-from conf.constant import Y_OFFSET_IDX, MODE_FILENAME, MODE_TARGET, MODE_TYPE, SCALE_FLAG
+from conf.constant import Y_OFFSET_IDX, MODE_FILENAME, MODE_TARGET, MODE_TYPE, SEQ_LEN, LABEL_LEN, PREDICT_LEN
 from conf.path_config import resource_dir
 
 logger = get_logger(__name__)
@@ -29,9 +29,9 @@ parser.add_argument('--freq', type=str, default='h',
                     help='freq for time features encoding, options:[s:secondly, t:minutely, h:hourly, d:daily, b:business days, w:weekly, m:monthly], you can also use more detailed freq like 15min or 3h')
 parser.add_argument('--checkpoints', type=str, default='./checkpoints/', help='location of model checkpoints')
 
-parser.add_argument('--seq_len', type=int, default=96, help='input sequence length of Informer encoder')
-parser.add_argument('--label_len', type=int, default=24, help='start token length of Informer decoder')
-parser.add_argument('--pred_len', type=int, default=24, help='prediction sequence length')
+parser.add_argument('--seq_len', type=int, default=SEQ_LEN, help='input sequence length of Informer encoder')
+parser.add_argument('--label_len', type=int, default=LABEL_LEN, help='start token length of Informer decoder')
+parser.add_argument('--pred_len', type=int, default=PREDICT_LEN, help='prediction sequence length')
 # Informer decoder input: concat[start token series(label_len), zero padding series(pred_len)]
 
 parser.add_argument('--enc_in', type=int, default=7, help='encoder input size')

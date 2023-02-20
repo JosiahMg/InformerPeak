@@ -4,7 +4,7 @@
 
 from django.urls import path
 from django.http import HttpResponse
-from api.views import PeakLeakInformer
+from api.views import informer_predict
 
 
 def index(request):
@@ -13,7 +13,5 @@ def index(request):
 
 urlpatterns = [
     path('', index, name='index'),
-    path('informer', PeakLeakInformer.data_process),
-    path('informer', PeakLeakInformer.train),
-    path('informer', PeakLeakInformer.predict),
+    path('optimization-model/push-optimize-init-data', informer_predict.push_init_data),
 ]
