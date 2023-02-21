@@ -351,7 +351,7 @@ class Dataset_Pred(Dataset):
             df_data = df_raw[[self.target]]
 
         if self.scale:
-            self.scaler.fit(df_data.values)
+            # self.scaler.fit(df_data.values)   # predict模式下不需要fit
             data = self.scaler.transform(df_data.values)
         else:
             data = df_data.values

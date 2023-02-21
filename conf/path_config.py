@@ -8,7 +8,7 @@ resource_dir = os.path.join(project_dir, 'resource')
 flights_dir = os.path.join(resource_dir, 'flights')
 
 """-----------------------结果输出路径---------------------------"""
-data_dir = os.path.join(project_dir, 'data_loader')
+data_dir = os.path.join(project_dir, 'data')
 save_scada_dir = os.path.join(resource_dir, 'scada')
 save_topology_dir = os.path.join(resource_dir, 'topology')
 

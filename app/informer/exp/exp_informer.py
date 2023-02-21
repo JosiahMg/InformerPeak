@@ -57,8 +57,10 @@ class Exp_Informer(Exp_Basic):
             model = nn.DataParallel(model, device_ids=self.args.device_ids)
         return model
 
-    def _get_data(self, flag):
+    def _get_data(self, flag, data_name=None):
         args = self.args
+        if data_name is not None:
+            args.data_path = data_name + '.csv'
 
         data_dict = {
             'ETTh1': Dataset_ETT_hour,
@@ -229,7 +231,7 @@ class Exp_Informer(Exp_Basic):
             os.makedirs(folder_path)
 
         mae, mse, rmse, mape, mspe = metric(preds, trues)
-        print('mse:{}, mae:{}'.format(mse, mae))
+        print('mae:{}, mse:{}, rmse:{}, mape:{}, mspe:{}'.format(mae, mse, rmse, mape, mspe))
 
         np.save(folder_path + 'metrics.npy', np.array([mae, mse, rmse, mape, mspe]))
         np.save(folder_path + 'pred.npy', preds)
@@ -237,13 +239,12 @@ class Exp_Informer(Exp_Basic):
 
         return
 
-    def predict(self, setting, load=False):
-        pred_data, pred_loader = self._get_data(flag='pred')
+    def predict(self, setting, data_name=None):
+        pred_data, pred_loader = self._get_data(flag='pred', data_name=data_name)
 
-        if load:
-            path = os.path.join(self.args.checkpoints, setting)
-            best_model_path = path + '/' + 'checkpoint.pth'
-            self.model.load_state_dict(torch.load(best_model_path))
+        path = os.path.join(self.args.checkpoints, setting)
+        best_model_path = path + '/' + 'checkpoint.pth'
+        self.model.load_state_dict(torch.load(best_model_path))
 
         self.model.eval()
 
